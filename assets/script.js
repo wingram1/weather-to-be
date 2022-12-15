@@ -99,6 +99,8 @@ function generateHTML(city, current, daily) {
 
     forecastContainer.append(dayCard);
   }
+
+  saveToHistory(city);
 }
 
 function unixToDate(unix) {
@@ -117,3 +119,58 @@ function kelvinsToFahr(K) {
 
   return F.toFixed(2);
 }
+
+function saveToHistory(city) {
+  // get data from localStorage
+  let searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
+
+  //if it doesn't exists, create
+  if (!searchHistory) {
+    searchHistory = [];
+  }
+
+  // loop through search history, see if what we searched already exists
+  for (let i = 0; i < searchHistory.length; i++) {
+    if (searchHistory[i] === city) {
+      searchHistory.splice(i, 1);
+    }
+  }
+
+  // write over saved data with new data
+  searchHistory.splice(0, 0, city);
+
+  // save to localStorage
+  localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+
+  loadHistory();
+}
+
+function loadHistory() {
+  const history = document.querySelector("#history");
+
+  history.replaceChildren();
+
+  let searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
+
+  if (!searchHistory) {
+    return;
+  }
+
+  for (let i = 0; i < searchHistory.length; i++) {
+    let historyButton = document.createElement("button");
+    historyButton.className = "btn btn-secondary historyBtn";
+    historyButton.textContent = searchHistory[i];
+    history.append(historyButton);
+
+    // get textcontent and run fetch
+    historyButton.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      let cityName = event.target.textContent;
+      getCoords(cityName);
+    });
+  }
+}
+
+// load history on page load
+loadHistory();
