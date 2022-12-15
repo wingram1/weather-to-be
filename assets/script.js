@@ -1,6 +1,6 @@
 const apikey = `9f22897565b785c5e1809cff5dde2ef9`;
-// const geocodeLink = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&appid=${apikey}`;
 
+// handles submit city form
 function searchHandler(event) {
   event.preventDefault();
 
@@ -9,8 +9,11 @@ function searchHandler(event) {
   getCoords(city);
 }
 
+// add event listener to button
 document.querySelector("#city-search").addEventListener("click", searchHandler);
 
+
+// function to reverse geocode (fetch coords)
 function getCoords(city) {
   const apiLink = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&appid=${apikey}`;
 
@@ -23,11 +26,13 @@ function getCoords(city) {
       const lat = data[0].lat;
       const lon = data[0].lon;
 
+      // run through to getForecast function
       getForecast(city, lat, lon);
     });
   });
 }
 
+// function to fetch forecast (from city coords)
 function getForecast(city, lat, lon) {
   const apiLink = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${apikey}`;
 
@@ -45,20 +50,26 @@ function getForecast(city, lat, lon) {
         daily.push(data.daily[i]);
       }
 
+      // generate HTML using given data
       generateHTML(city, current, daily);
     });
   });
 }
 
+// function to generate HTML
 function generateHTML(city, current, daily) {
   // current
   const currentContainer = document.querySelector("#current");
+
+  // destroys all children so we can make copies
   currentContainer.replaceChildren();
 
   const currentDate = unixToDate(current.dt);
   const currentIcon = `https://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`;
 
+  // console.log() data so we can look at it
   console.log(city, current, daily);
+
   //h2 city name - date - icon
   const cityName = document.createElement("h2");
   cityName.innerHTML = `${city} (${currentDate}) <img src=${currentIcon} />`;
@@ -103,6 +114,7 @@ function generateHTML(city, current, daily) {
   saveToHistory(city);
 }
 
+// convert unix to readable date format
 function unixToDate(unix) {
   const date = new Date(unix * 1000);
   console.log(date);
@@ -156,6 +168,7 @@ function loadHistory() {
     return;
   }
 
+  // loop through search history
   for (let i = 0; i < searchHistory.length; i++) {
     let historyButton = document.createElement("button");
     historyButton.className = "btn btn-secondary historyBtn";

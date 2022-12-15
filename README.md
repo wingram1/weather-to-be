@@ -1,2 +1,7 @@
 # weather-to-be
-Weather to be or not to be? That is the question.
+
+## About the Project
+
+### Features
+
+### Future Development
