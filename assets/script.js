@@ -65,7 +65,7 @@ function generateHTML(city, current, daily) {
 
   // temp
   const currentTemp = document.createElement("p");
-  currentTemp.textContent = `Temp: ${kelvinsToFahr(current.temp)}°`;
+  currentTemp.textContent = `Temp: ${kelvinsToFahr(current.temp)}°F`;
   // wind
   const currentWind = document.createElement("p");
   currentWind.textContent = `Wind: ${current.wind_speed} MPH`;
@@ -79,13 +79,26 @@ function generateHTML(city, current, daily) {
   currentContainer.append(currentHumidity);
 
   // 5-day forecast cards
-  document.querySelector("#forecast").replaceChildren();
-  // card
-  // date
-  // icon
-  // temp
-  // wind
-  // humidity
+  const forecastContainer = document.querySelector("#cards");
+  forecastContainer.replaceChildren();
+
+  for (let i = 0; i < daily.length; i++) {
+    const day = daily[i];
+    // card
+    const dayCard = document.createElement("div");
+    dayCard.className = "card";
+    dayCard.innerHTML = `
+        <h4>${unixToDate(day.dt)}</h4>
+        <img src="https://openweathermap.org/img/wn/${
+          day.weather[0].icon
+        }@2x.png"
+        <p>Temp: ${kelvinsToFahr(day.temp.day)}°F</p>
+        <p>Wind: ${day.wind_speed}</p>
+        <p>Humidity: ${day.humidity}%</p>
+    `;
+
+    forecastContainer.append(dayCard);
+  }
 }
 
 function unixToDate(unix) {
